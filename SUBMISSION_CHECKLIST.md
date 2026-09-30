@@ -28,8 +28,8 @@ Reviewed against the assignment brief, starter instructions, public rubric categ
 | Decision memo <=500 words | `docs/architecture_decision.md` (380 words) | Complete | Decision should be revisited with model-backed evals |
 | README setup, flow, tools, comparison, ship decision, limitations | `README.md` | Complete | None |
 | Error and edge-case tests | `tests/test_solution.py` plus starter tests | Complete | No load, browser accessibility, or live enterprise integration tests |
-| No secrets and `.env.example` | `.gitignore`, `.env.example` | Complete | Repository still needs publishing under the student's GitHub account |
-| Public GitHub repository URL | Prepared local Git repository | Pending | Requires the student's GitHub destination and public push |
+| No secrets and `.env.example` | `.gitignore`, `.env.example` | Complete | None found in the final scan |
+| Public GitHub repository URL | `https://github.com/shivam24bcs10251-sys/ai-procurement-request-copilot` | Complete | None |
 | Google Form submission | Assignment form | Pending | Must be submitted by the student with the public repository URL |
 
 ## Verified commands
