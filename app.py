@@ -137,4 +137,4 @@ with telemetry_tab:
     if telemetry:
         st.write("**Tools called:** " + " → ".join(telemetry.tool_names))
     if not telemetry or telemetry.llm_calls == 0:
-        st.caption("This run used the deterministic safety fallback because no model call was configured.")
+        st.caption("This run used the deterministic safety fallback; no successful model call was recorded.")

@@ -45,7 +45,7 @@ The analyst gathers evidence and runs the first policy pass. A copied, structure
 
 ## Deterministic and model-driven boundaries
 
-Budget arithmetic, thresholds, date expiry, approvals, sensitive-data controls, missing data, conflicts, and injection detection are deterministic. This submission had no model credential, so evaluated runs truthfully report zero LLM calls and use the deterministic fallback. A production model may summarize ambiguous business needs or draft plain-language rationale, but its text must be treated as untrusted and cannot alter the policy result.
+Budget arithmetic, thresholds, date expiry, approvals, sensitive-data controls, missing data, conflicts, and injection detection are deterministic. The local model summarizes the submitted business need in both paths; the staged reviewer makes a second model call to explain the already-computed controls. Model text is advisory, bounded in length, and cannot alter risk flags or approvals. When the model endpoint fails or is disabled, the same request completes through the deterministic fallback and telemetry records no successful LLM call.
 
 ## Stop and escalation conditions
 
@@ -69,7 +69,7 @@ Budget arithmetic, thresholds, date expiry, approvals, sensitive-data controls, 
 
 ## Intentional scope limits
 
-The MVP does not persist decisions, modify source systems, execute approvals, purchase software, authenticate users, or contact reviewers. Those capabilities would require identity, authorization, audit retention, idempotency, connector contracts, and stakeholder acceptance testing.
+The MVP does not persist decisions, modify source systems, execute approvals, purchase software, authenticate users, or contact reviewers. The local model is not a production-approved model service. Those capabilities would require identity, authorization, audit retention, idempotency, connector contracts, model governance, and stakeholder acceptance testing.
 
 ## Scaling path
 

@@ -23,9 +23,9 @@ Reviewed against the assignment brief, starter instructions, public rubric categ
 | Tool/API unavailable | Fail-closed vendor tool and `REQ-1009` test | Complete | No retry or circuit breaker in MVP |
 | Reproducible same-set evaluation | `evals/run_comparison.py` | Complete | Six visible synthetic cases only |
 | Evaluation results | `evals/evaluation_results.csv`, `comparison_summary.json` | Complete | Local latency is not production performance |
-| Latency and call counts | Evaluation files and README | Complete | Zero LLM calls because no model credential was supplied |
+| Latency and call counts | Evaluation files and README | Complete | Local timings are based on one measured run per case |
 | Architecture/workflow diagram and assumptions | `docs/architecture.md` | Complete | Mermaid requires a compatible renderer on GitHub |
-| Decision memo <=500 words | `docs/architecture_decision.md` (380 words) | Complete | Decision should be revisited with model-backed evals |
+| Decision memo <=500 words | `docs/architecture_decision.md` | Complete | Decision should be revisited with broader model evals |
 | README setup, flow, tools, comparison, ship decision, limitations | `README.md` | Complete | None |
 | Error and edge-case tests | `tests/test_solution.py` plus starter tests | Complete | No load, browser accessibility, or live enterprise integration tests |
 | No secrets and `.env.example` | `.gitignore`, `.env.example` | Complete | None found in the final scan |
@@ -36,7 +36,7 @@ Reviewed against the assignment brief, starter instructions, public rubric categ
 
 ```text
 python verify_setup.py                              PASS
-python -m unittest discover -s tests -v            PASS (17 tests)
+python -m unittest discover -s tests -v            PASS (20 tests)
 python evals/run_public_evals.py --architecture single  PASS (6/6)
 python evals/run_public_evals.py --architecture staged  PASS (6/6)
 python evals/run_comparison.py                      PASS (6/6 each)

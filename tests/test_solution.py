@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import os
 import unittest
 from unittest.mock import patch
 
 import requests
 
 from src.procurement_tools import review_is_expired
+from src.procurement_tools import EvidencePacket
+from src.policy_engine import policy_tool
 from src.solution import handle_request
+from src.telemetry import RunTelemetryCounter
 
 
 def risk_record(vendor_name: str, **overrides: object) -> dict:
@@ -23,6 +27,7 @@ def risk_record(vendor_name: str, **overrides: object) -> dict:
     return record
 
 
+@patch.dict(os.environ, {"OLLAMA_MODEL": ""})
 class SolutionTests(unittest.TestCase):
     @patch("src.procurement_tools.get_vendor_risk")
     def test_low_value_request_uses_manager_threshold(self, vendor_api):
@@ -89,6 +94,28 @@ class SolutionTests(unittest.TestCase):
     def test_unknown_architecture_is_rejected(self):
         with self.assertRaises(ValueError):
             handle_request("REQ-1001", "committee")  # type: ignore[arg-type]
+
+    def test_invalid_numeric_values_require_clarification(self):
+        packet = EvidencePacket(
+            request={
+                "request_id": "REQ-X",
+                "requester_id": "E-X",
+                "product_name": "Example",
+                "vendor_name": "Example",
+                "annual_cost_usd": -1,
+                "user_count": 0,
+                "business_justification": "Test",
+                "data_access_level": "none",
+                "requested_integrations": [],
+            },
+            employee={"department": "Finance"},
+            budget={"available_usd": 100},
+            vendor_registry={"procurement_status": "Approved", "security_status": "Approved", "legal_terms_status": "Approved"},
+            vendor_risk={"security_review_status": "approved", "last_review_date": "2026-06-20"},
+        )
+        review = policy_tool(packet, RunTelemetryCounter())
+        self.assertIn("valid annual cost", review["missing_information"])
+        self.assertIn("valid user/license count", review["missing_information"])
 
 
 if __name__ == "__main__":

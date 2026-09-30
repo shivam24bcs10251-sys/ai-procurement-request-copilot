@@ -60,11 +60,16 @@ def policy_tool(
         _add_unique(missing, "requester and department")
     if packet.budget is None:
         _add_unique(missing, "department budget")
+    cost = request.get("annual_cost_usd")
+    if isinstance(cost, (int, float)) and cost < 0:
+        _add_unique(missing, "valid annual cost")
+    user_count = request.get("user_count")
+    if isinstance(user_count, (int, float)) and user_count <= 0:
+        _add_unique(missing, "valid user/license count")
     if missing:
         _add_unique(flags, "missing_information")
 
-    cost = request.get("annual_cost_usd")
-    if isinstance(cost, (int, float)):
+    if isinstance(cost, (int, float)) and cost >= 0:
         _add_unique(approvals, *_financial_approvals(cost))
         if packet.budget and cost > packet.budget["available_usd"]:
             _add_unique(flags, "budget_insufficient")

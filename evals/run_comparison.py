@@ -27,7 +27,7 @@ EXPECTED_ACTION_TERMS = {
     "REQ-1006": ("clarification", "missing information"),
     "REQ-1009": ("manual evidence", "verify the vendor"),
 }
-MEASURED_RUNS = 5
+MEASURED_RUNS = 1
 
 
 def wait_for_api(proc: subprocess.Popen, timeout_seconds: float = 10.0) -> None:

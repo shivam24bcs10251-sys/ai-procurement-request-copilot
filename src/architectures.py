@@ -4,6 +4,7 @@ from copy import deepcopy
 from typing import Any
 
 from src.contracts import ProcurementDecision, RunTelemetry
+from src.llm_advisor import add_need_interpretation, add_risk_review
 from src.policy_engine import policy_tool
 from src.procurement_tools import (
     EvidencePacket,
@@ -82,6 +83,7 @@ def run_single_agent(request_id: str) -> ProcurementDecision:
     """One orchestrator gathers evidence, applies policy, and drafts the handoff."""
     telemetry = RunTelemetryCounter()
     packet = _gather(request_id, telemetry)
+    add_need_interpretation(packet, telemetry)
     review = policy_tool(packet, telemetry)
     return _decision(packet, review, telemetry)
 
@@ -90,6 +92,7 @@ def run_staged_agents(request_id: str) -> ProcurementDecision:
     """An analyst creates an evidence pack; a reviewer independently reapplies policy."""
     telemetry = RunTelemetryCounter()
     analyst_packet = _gather(request_id, telemetry)
+    add_need_interpretation(analyst_packet, telemetry)
     analyst_review = policy_tool(analyst_packet, telemetry, tool_name="analyst_policy_tool")
 
     # The handoff is copied to prevent the reviewer from mutating analyst state.
@@ -103,6 +106,7 @@ def run_staged_agents(request_id: str) -> ProcurementDecision:
         reviewer_review["risk_flags"] = list(
             dict.fromkeys(reviewer_review["risk_flags"] + ["agent_review_disagreement"])
         )
-    # Keep one audit item for each stage while returning the reviewer's result.
-    analyst_packet.evidence.append(reviewer_packet.evidence[-1])
+    add_risk_review(reviewer_packet, reviewer_review, telemetry)
+    # Keep all reviewer audit items while returning the reviewer's policy result.
+    analyst_packet.evidence.extend(reviewer_packet.evidence[len(analyst_packet.evidence) :])
     return _decision(analyst_packet, reviewer_review, telemetry)

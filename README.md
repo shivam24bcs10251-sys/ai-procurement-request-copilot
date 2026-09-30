@@ -29,6 +29,8 @@ python run_local.py
 
 Open `http://127.0.0.1:8501`. The command starts both the vendor risk API on port 8001 and the Streamlit product UI on port 8501. No external API key is required for the deterministic safety path.
 
+For the model-backed path used in the recorded evaluation, install [Ollama](https://ollama.com), then run `ollama pull llama3.2:1b`. The app calls that local model by default. Set `OLLAMA_MODEL=` to disable it, or copy `.env.example` to `.env` to change the local model or endpoint. If Ollama is unavailable, the request still completes through the deterministic safety path and reports zero successful LLM calls.
+
 Run preflight and tests:
 
 ```bash
@@ -58,7 +60,7 @@ It returns the supplied `ProcurementDecision` contract.
 
 Detailed data flow, agent boundaries, stop conditions, and assumptions are in [Architecture and workflow](docs/architecture.md).
 
-The implementation uses seven visible evidence/control tools:
+The implementation uses nine visible evidence, AI, and control tools:
 
 | Tool | Purpose | Type |
 |---|---|---|
@@ -68,6 +70,8 @@ The implementation uses seven visible evidence/control tools:
 | `vendor_registry_tool` | Read procurement, security, and legal state | Data retrieval |
 | `vendor_risk_api_tool` | Call the mock external service | API integration |
 | `purchase_history_tool` | Find previous related purchases | Data retrieval |
+| `llm_need_interpreter` | Summarize the submitted business need | Local model, advisory |
+| `llm_risk_reviewer` | Explain deterministic risks in the staged path | Local model, advisory |
 | `deterministic_policy_tool` | Apply policy thresholds and controls | Deterministic |
 
 Architecture A uses one orchestrator to gather evidence and run policy. Architecture B passes a copied evidence packet from an analyst stage to an independent policy reviewer. Both share the same rules so orchestration cannot change approval thresholds.
@@ -97,17 +101,17 @@ Run the full comparison independently; it starts and stops its own mock API:
 python evals/run_comparison.py
 ```
 
-The comparison uses the same six public cases for both architectures, warms both paths, and averages five measured runs per case. It writes [detailed results](evals/evaluation_results.csv) and a [machine-readable summary](evals/comparison_summary.json).
+The comparison uses the same six public cases for both architectures and warms both paths before measurement. It writes [detailed results](evals/evaluation_results.csv) and a [machine-readable summary](evals/comparison_summary.json).
 
 | Metric | Single agent | Staged reviewer |
 |---|---:|---:|
 | Cases passing all quality checks | 6/6 | 6/6 |
-| Average latency | 3.6 ms | 3.6 ms |
-| Average LLM calls | 0.0 | 0.0 |
-| Average tool calls | 7.0 | 8.0 |
+| Average latency | 524.60 ms | 1,143.85 ms |
+| Average LLM calls | 1.0 | 2.0 |
+| Average tool calls | 8.0 | 10.0 |
 | Observed policy/grounding failures | 0 | 0 |
 
-These are local synthetic-data measurements, not production performance claims. No model credential was available during evaluation, so `llm_calls=0` is intentionally reported rather than fabricated. The results validate evidence integration, controls, orchestration, and UI handoff; they do not validate model quality.
+These are local synthetic-data measurements from `llama3.2:1b` through Ollama, not production performance claims. The model only explains submitted context and deterministic controls; it cannot add approvals or change the policy result.
 
 ## Ship decision
 
@@ -121,7 +125,8 @@ Ship the single-agent architecture for this MVP. It matched the staged design on
 - Catalog overlap is intentionally conservative and needs a human to judge functional fit.
 - The current product accepts seeded request IDs; it does not include identity, persistence, approval workflow, audit storage, or live enterprise connectors.
 - Tool calls are synchronous and local except for the mock HTTP API.
-- The deterministic fallback makes the demo reproducible without secrets. Before production, add a governed model only for ambiguous need interpretation and recommendation wording; keep policy enforcement and approval authority outside the model.
+- The local model path requires Ollama and the configured model. The deterministic fallback keeps the demo usable without that optional service.
+- Before production, evaluate a governed model on stakeholder-labeled ambiguous requests; keep policy enforcement and approval authority outside the model.
 - Public cases are small and visible. Hidden, adversarial, load, accessibility, and user acceptance testing remain production gates.
 
 ## Repository map
@@ -131,6 +136,7 @@ app.py                       Streamlit stakeholder UI
 run_local.py                 one-command local launcher
 src/architectures.py         single and staged orchestration
 src/procurement_tools.py     evidence tools and injection/date checks
+src/llm_advisor.py           bounded local-model interpretation
 src/policy_engine.py         deterministic procurement controls
 src/solution.py              evaluation adapter
 evals/run_comparison.py      reproducible architecture comparison
