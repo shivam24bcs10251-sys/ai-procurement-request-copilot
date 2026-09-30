@@ -1,0 +1,18 @@
+[
+  {
+    "architecture": "single",
+    "cases": 6,
+    "cases_passing_all_quality_checks": 6,
+    "avg_latency_ms": 3.6,
+    "avg_llm_calls": 0.0,
+    "avg_tool_calls": 7.0
+  },
+  {
+    "architecture": "staged",
+    "cases": 6,
+    "cases_passing_all_quality_checks": 6,
+    "avg_latency_ms": 3.6,
+    "avg_llm_calls": 0.0,
+    "avg_tool_calls": 8.0
+  }
+]

@@ -1,0 +1,13 @@
+case_id,request_id,architecture,correct_next_action,grounded_evidence,policy_followed,human_escalation_correct,latency_ms,llm_calls,tool_calls,notes,measurement_runs
+PUB-01,REQ-1001,single,True,True,True,True,3.73,0,7,,5
+PUB-02,REQ-1002,single,True,True,True,True,3.65,0,7,,5
+PUB-03,REQ-1003,single,True,True,True,True,3.74,0,7,,5
+PUB-04,REQ-1005,single,True,True,True,True,3.5,0,7,,5
+PUB-05,REQ-1006,single,True,True,True,True,3.51,0,7,,5
+PUB-06,REQ-1009,single,True,True,True,True,3.45,0,7,,5
+PUB-01,REQ-1001,staged,True,True,True,True,3.57,0,8,,5
+PUB-02,REQ-1002,staged,True,True,True,True,3.65,0,8,,5
+PUB-03,REQ-1003,staged,True,True,True,True,3.63,0,8,,5
+PUB-04,REQ-1005,staged,True,True,True,True,3.68,0,8,,5
+PUB-05,REQ-1006,staged,True,True,True,True,3.57,0,8,,5
+PUB-06,REQ-1009,staged,True,True,True,True,3.5,0,8,,5
