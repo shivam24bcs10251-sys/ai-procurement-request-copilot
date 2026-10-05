@@ -16,10 +16,10 @@ st.set_page_config(page_title="Procurement Copilot", page_icon="✓", layout="wi
 st.markdown(
     """
     <style>
-      .block-container {max-width: 1180px; padding-top: 2rem;}
-      [data-testid="stMetric"] {background: #f7f9fc; border: 1px solid #e4e9f2; padding: 12px; border-radius: 10px;}
-      .eyebrow {color: #087f6b; font-weight: 700; letter-spacing: .08em; font-size: .8rem;}
-      .notice {background: #effaf7; border-left: 4px solid #0b9b83; padding: 12px 16px; border-radius: 4px;}
+      .block-container {max-width: 1180px; padding-top: 4rem;}
+      [data-testid="stMetric"] {background: var(--secondary-background-color); color: var(--text-color); border: 1px solid #80808055; padding: 12px; border-radius: 10px;}
+      .eyebrow {color: #0b9b83; font-weight: 700; letter-spacing: .08em; font-size: .8rem;}
+      .notice {background: #effaf7; color: #134e43; border-left: 4px solid #0b9b83; padding: 12px 16px; border-radius: 4px;}
     </style>
     """,
     unsafe_allow_html=True,
